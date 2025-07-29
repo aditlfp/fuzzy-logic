@@ -35,7 +35,7 @@ This project implements a **Fuzzy Tsukamoto** logic system to evaluate customer 
 /fuzzy-tsukamoto/
 ├── index.html
 ├── /assets
-│ └── style.css
+│ └── main.css
 ```
 
 ---
