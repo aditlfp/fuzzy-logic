@@ -1,0 +1,309 @@
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    /* display: flex; */
+    /* flex-direction: row; */
+    /* justify-content: center; */
+    gap: 20px;
+    padding: 0 40px; /* <- ini penting supaya tidak mentok kiri-kanan */
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+}
+
+.header h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.input-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.input-card {
+    text-align: center;
+    width: 30%;
+    height: 32.9rem;
+}
+
+.input-card h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.value-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.slider-container {
+    margin: 20px 0;
+    position: relative;
+}
+
+.slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #ddd;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.membership-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.membership-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px 0;
+}
+
+.membership-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.membership-value {
+    background: #f0f0f0;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.progress-red { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
+.progress-yellow { background: linear-gradient(90deg, #feca57, #ff9ff3); }
+.progress-green { background: linear-gradient(90deg, #48dbfb, #0abde3); }
+
+.rules-section {
+    margin-bottom: 30px;
+}
+
+.rules-section h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rule-item {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+.rule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.rule-text {
+    font-weight: 600;
+    color: #333;
+}
+
+.alpha-badge {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.rule-details {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.result-section {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.result-main {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.result-value {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #333;
+    margin: 15px 0;
+}
+
+.result-category {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 25px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.kategori-tidak-puas { background: linear-gradient(45deg, #ff6b6b, #ee5a24); }
+.kategori-kurang-puas { background: linear-gradient(45deg, #feca57, #ff9ff3); }
+.kategori-cukup-puas { background: linear-gradient(45deg, #48dbfb, #0abde3); }
+.kategori-puas { background: linear-gradient(45deg, #0be881, #00d2d3); }
+.kategori-sangat-puas { background: linear-gradient(45deg, #5f27cd, #00d2d3); }
+
+.calculation-details {
+    background: rgba(255,255,255,0.6);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.calculation-details h4 {
+    color: #333;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.calculation-step {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.final-calculation {
+    font-weight: 600;
+    color: #333;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.satisfaction-bar {
+    width: 100%;
+    height: 15px;
+    background: linear-gradient(90deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #0be881 75%, #5f27cd 100%);
+    border-radius: 10px;
+    position: relative;
+    margin-top: 15px;
+}
+
+.satisfaction-indicator {
+    position: absolute;
+    top: -5px;
+    width: 25px;
+    height: 25px;
+    background: white;
+    border: 3px solid #333;
+    border-radius: 50%;
+    transition: left 0.5s ease;
+}
+
+.satisfaction-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 2rem; }
+    .result-value { font-size: 3rem; }
+    .input-section, .membership-section {
+        grid-template-columns: 1fr;
+    }
+}

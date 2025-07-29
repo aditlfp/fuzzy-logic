@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Fuzzy Tsukamoto - Kepuasan Pelayanan Restoran</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/main.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-brain"></i> Sistem Fuzzy Tsukamoto</h1>
+            <p>Menentukan tingkat kepuasan pelayanan restoran berdasarkan kualitas makanan dan pelayanan</p>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="card input-card">
+                <h3><i class="fas fa-utensils"></i> Kualitas Makanan</h3>
+                <div class="value-display" id="makanan-value">50</div>
+                <div class="slider-container">
+                    <input type="range" id="makanan-slider" class="slider" min="0" max="100" value="50">
+                </div>
+                <small>Skala: 0 (Buruk) - 100 (Sangat Baik)</small>
+            </div>
+
+            <div class="card input-card">
+                <h3><i class="fas fa-concierge-bell"></i> Kualitas Pelayanan</h3>
+                <div class="value-display" id="pelayanan-value">50</div>
+                <div class="slider-container">
+                    <input type="range" id="pelayanan-slider" class="slider" min="0" max="100" value="50">
+                </div>
+                <small>Skala: 0 (Sangat Lambat) - 100 (Sangat Cepat)</small>
+            </div>
+
+
+              <!-- Results -->
+            <div class="card result-section">
+                <h3><i class="fas fa-trophy"></i> Hasil Defuzzifikasi Tsukamoto</h3>
+                
+                <div class="result-main">
+                    <div>Tingkat Kepuasan Pelayanan</div>
+                    <div class="result-value" id="final-result">0.00</div>
+                    <div class="result-category" id="result-category">Cukup Puas</div>
+                </div>
+
+                <div class="calculation-details">
+                    <h4>Perhitungan:</h4>
+                    <div class="calculation-step" id="numerator-calc">Numerator (Σ αᵢ × zᵢ) = 0.0000</div>
+                    <div class="calculation-step" id="denominator-calc">Denominator (Σ αᵢ) = 0.0000</div>
+                    <div class="final-calculation" id="final-calc">Hasil = 0.0000 ÷ 0.0000 = 0.00</div>
+                </div>
+
+                <div class="satisfaction-bar">
+                    <div class="satisfaction-indicator" id="satisfaction-indicator"></div>
+                </div>
+                <div class="satisfaction-labels">
+                    <span>Tidak Puas |</span>
+                    <span>Kurang Puas|</span>
+                    <span>Cukup Puas|</span>
+                    <span>Puas|</span>
+                    <span>Sangat Puas</span>
+                </div>
+            </div>
+        </div>
+        <!-- Membership Functions -->
+        <div class="membership-section">
+            <div class="card">
+                <h3><i class="fas fa-chart-line"></i> Membership Kualitas Makanan</h3>
+                <div id="makanan-membership"></div>
+            </div>
+    
+            <div class="card">
+                <h3><i class="fas fa-chart-area"></i> Membership Kualitas Pelayanan</h3>
+                <div id="pelayanan-membership"></div>
+            </div>
+        </div>
+    
+        <!-- Active Rules -->
+        <div class="card rules-section">
+            <h3><i class="fas fa-calculator"></i> Rules yang Aktif (α > 0)</h3>
+            <div id="active-rules"></div>
+        </div>
+    </div>
+
+    <script>
+        // Membership Functions untuk Kualitas Makanan
+        const kualitasMakananMF = [
+            {
+                name: 'Buruk',
+                color: 'progress-red',
+                calculate: (x) => x <= 30 ? 1 : x <= 60 ? (60 - x) / 30 : 0
+            },
+            {
+                name: 'Sedang',
+                color: 'progress-yellow',
+                calculate: (x) => x <= 30 ? 0 : x <= 50 ? (x - 30) / 20 : x <= 80 ? (80 - x) / 30 : 0
+            },
+            {
+                name: 'Baik',
+                color: 'progress-green',
+                calculate: (x) => x <= 60 ? 0 : x <= 90 ? (x - 60) / 30 : 1
+            }
+        ];
+
+        // Membership Functions untuk Kualitas Pelayanan
+        const kualitasPelayananMF = [
+            {
+                name: 'Lambat',
+                color: 'progress-red',
+                calculate: (x) => x <= 25 ? 1 : x <= 55 ? (55 - x) / 30 : 0
+            },
+            {
+                name: 'Normal',
+                color: 'progress-yellow',
+                calculate: (x) => x <= 25 ? 0 : x <= 45 ? (x - 25) / 20 : x <= 75 ? (75 - x) / 30 : 0
+            },
+            {
+                name: 'Cepat',
+                color: 'progress-green',
+                calculate: (x) => x <= 55 ? 0 : x <= 85 ? (x - 55) / 30 : 1
+            }
+        ];
+
+        // Fuzzy Rules dengan Tsukamoto defuzzification
+        const fuzzyRules = [
+            { id: 1, kualitasMakanan: 'Buruk', kualitasPelayanan: 'Lambat', kepuasan: 'Tidak Puas', 
+              defuzzification: (alpha) => 50 - alpha * 30 },
+            { id: 2, kualitasMakanan: 'Buruk', kualitasPelayanan: 'Normal', kepuasan: 'Kurang Puas', 
+              defuzzification: (alpha) => 40 - alpha * 20 },
+            { id: 3, kualitasMakanan: 'Buruk', kualitasPelayanan: 'Cepat', kepuasan: 'Cukup Puas', 
+              defuzzification: (alpha) => 55 + alpha * 15 },
+            { id: 4, kualitasMakanan: 'Sedang', kualitasPelayanan: 'Lambat', kepuasan: 'Kurang Puas', 
+              defuzzification: (alpha) => 45 - alpha * 15 },
+            { id: 5, kualitasMakanan: 'Sedang', kualitasPelayanan: 'Normal', kepuasan: 'Cukup Puas', 
+              defuzzification: (alpha) => 60 + alpha * 10 },
+            { id: 6, kualitasMakanan: 'Sedang', kualitasPelayanan: 'Cepat', kepuasan: 'Puas', 
+              defuzzification: (alpha) => 70 + alpha * 15 },
+            { id: 7, kualitasMakanan: 'Baik', kualitasPelayanan: 'Lambat', kepuasan: 'Cukup Puas', 
+              defuzzification: (alpha) => 65 + alpha * 10 },
+            { id: 8, kualitasMakanan: 'Baik', kualitasPelayanan: 'Normal', kepuasan: 'Puas', 
+              defuzzification: (alpha) => 75 + alpha * 15 },
+            { id: 9, kualitasMakanan: 'Baik', kualitasPelayanan: 'Cepat', kepuasan: 'Sangat Puas', 
+              defuzzification: (alpha) => 85 + alpha * 15 }
+        ];
+
+        // Fungsi untuk menampilkan membership values
+        function displayMembership(containerId, memberships) {
+            const container = $(`#${containerId}`);
+            container.empty();
+            
+            memberships.forEach(membership => {
+                const membershipHtml = `
+                    <div class="membership-item">
+                        <div style="width: 100%;">
+                            <div class="membership-name">${membership.name}</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${membership.color}" style="width: ${membership.value * 100}%"></div>
+                            </div>
+                        </div>
+                        <div class="membership-value">${membership.value.toFixed(3)}</div>
+                    </div>
+                `;
+                container.append(membershipHtml);
+            });
+        }
+
+        // Fungsi untuk menghitung fuzzy logic
+        function calculateFuzzy() {
+            const kualitasMakanan = parseInt($('#makanan-slider').val());
+            const kualitasPelayanan = parseInt($('#pelayanan-slider').val());
+
+            // Hitung membership values
+            const makananMembership = kualitasMakananMF.map(mf => ({
+                name: mf.name,
+                value: mf.calculate(kualitasMakanan),
+                color: mf.color
+            }));
+
+            const pelayananMembership = kualitasPelayananMF.map(mf => ({
+                name: mf.name,
+                value: mf.calculate(kualitasPelayanan),
+                color: mf.color
+            }));
+
+            // Tampilkan membership values
+            displayMembership('makanan-membership', makananMembership);
+            displayMembership('pelayanan-membership', pelayananMembership);
+
+            // Evaluasi rules
+            const ruleResults = [];
+            let numerator = 0;
+            let denominator = 0;
+
+            fuzzyRules.forEach(rule => {
+                const makananValue = makananMembership.find(m => m.name === rule.kualitasMakanan)?.value || 0;
+                const pelayananValue = pelayananMembership.find(p => p.name === rule.kualitasPelayanan)?.value || 0;
+                
+                const alpha = Math.min(makananValue, pelayananValue);
+                
+                if (alpha > 0) {
+                    const z = rule.defuzzification(alpha);
+                    ruleResults.push({
+                        rule,
+                        alpha,
+                        z,
+                        makananValue,
+                        pelayananValue
+                    });
+                    
+                    numerator += alpha * z;
+                    denominator += alpha;
+                }
+            });
+
+            // Tampilkan active rules
+            const activeRulesContainer = $('#active-rules');
+            activeRulesContainer.empty();
+            
+            if (ruleResults.length === 0) {
+                activeRulesContainer.html('<div class="rule-item">Tidak ada rule yang aktif</div>');
+            } else {
+                ruleResults.forEach((ruleResult, index) => {
+                    const ruleHtml = `
+                        <div class="rule-item">
+                            <div class="rule-header">
+                                <div class="rule-text">
+                                    Rule ${ruleResult.rule.id}: ${ruleResult.rule.kualitasMakanan} ∧ ${ruleResult.rule.kualitasPelayanan} → ${ruleResult.rule.kepuasan}
+                                </div>
+                                <div class="alpha-badge">α = ${ruleResult.alpha.toFixed(3)}</div>
+                            </div>
+                            <div class="rule-details">
+                                <div>μ Makanan(${ruleResult.rule.kualitasMakanan}) = ${ruleResult.makananValue.toFixed(3)}</div>
+                                <div>μ Pelayanan(${ruleResult.rule.kualitasPelayanan}) = ${ruleResult.pelayananValue.toFixed(3)}</div>
+                                <div>α = min(${ruleResult.makananValue.toFixed(3)}, ${ruleResult.pelayananValue.toFixed(3)}) = ${ruleResult.alpha.toFixed(3)}</div>
+                                <div style="font-weight: 600;">z${ruleResult.rule.id} = ${ruleResult.z.toFixed(2)}</div>
+                            </div>
+                        </div>
+                    `;
+                    activeRulesContainer.append(ruleHtml);
+                });
+            }
+
+            // Hitung hasil akhir
+            const finalResult = denominator > 0 ? numerator / denominator : 0;
+            
+            // Tentukan kategori
+            let kategoriKepuasan = '';
+            let warnaKategori = '';
+            if (finalResult < 30) {
+                kategoriKepuasan = 'Tidak Puas';
+                warnaKategori = 'kategori-tidak-puas';
+            } else if (finalResult < 50) {
+                kategoriKepuasan = 'Kurang Puas';
+                warnaKategori = 'kategori-kurang-puas';
+            } else if (finalResult < 70) {
+                kategoriKepuasan = 'Cukup Puas';
+                warnaKategori = 'kategori-cukup-puas';
+            } else if (finalResult < 85) {
+                kategoriKepuasan = 'Puas';
+                warnaKategori = 'kategori-puas';
+            } else {
+                kategoriKepuasan = 'Sangat Puas';
+                warnaKategori = 'kategori-sangat-puas';
+            }
+
+            // Update hasil
+            $('#final-result').text(finalResult.toFixed(2));
+            $('#result-category').text(kategoriKepuasan).attr('class', `result-category ${warnaKategori}`);
+            
+            // Update perhitungan
+            $('#numerator-calc').text(`Numerator (Σ αᵢ × zᵢ) = ${numerator.toFixed(4)}`);
+            $('#denominator-calc').text(`Denominator (Σ αᵢ) = ${denominator.toFixed(4)}`);
+            $('#final-calc').text(`Hasil = ${numerator.toFixed(4)} ÷ ${denominator.toFixed(4)} = ${finalResult.toFixed(2)}`);
+            
+            // Update satisfaction indicator
+            const indicatorPosition = Math.max(0, Math.min(100, finalResult));
+            $('#satisfaction-indicator').css('left', `calc(${indicatorPosition}% - 12px)`);
+        }
+
+        // Event listeners
+        $(document).ready(function() {
+            // Update nilai saat slider berubah
+            $('#makanan-slider').on('input', function() {
+                $('#makanan-value').text($(this).val());
+                calculateFuzzy();
+            });
+
+            $('#pelayanan-slider').on('input', function() {
+                $('#pelayanan-value').text($(this).val());
+                calculateFuzzy();
+            });
+
+            // Hitung awal
+            calculateFuzzy();
+        });
+    </script>
+</body>
+</html>
