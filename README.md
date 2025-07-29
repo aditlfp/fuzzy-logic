@@ -1,6 +1,7 @@
 **Fuzzy Logic Model Fuzzy Tsukamoto**
 
-[![Build With](https://skillicons.dev/icons?i=js,html,css,jquery)]
+**Build And Develop With : **
+![Build With](https://skillicons.dev/icons?i=js,html,css,jquery)
 
 **Feature**
 
